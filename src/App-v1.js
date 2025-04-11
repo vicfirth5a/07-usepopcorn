@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const tempMovieData = [
   {
@@ -50,41 +50,9 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-const KEY = "5d892faf";
-// const query = "interstellar";
-const query = "huhkhkljh";
-
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  useEffect(function () {
-    async function fetchMovies() {
-      try {
-        setIsLoading(true);
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
-        );
-        if (!res.ok) throw new Error("獲取資料失敗");
-        //如果拋出錯誤事件，後面的程式碼就不會執行了
-
-        const data = await res.json();
-        console.log(data);
-        if (data.Response === "False") throw new Error("找不到你要搜尋的電影");
-
-        setMovies(data.Search);
-      } catch (err) {
-        console.error(err.message);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchMovies();
-  }, []);
-
   return (
     <>
       <NavBar>
@@ -94,10 +62,7 @@ export default function App() {
 
       <Main>
         <Box>
-          {/* {isLoading?<Loader/>:<MovieList movies={movies} />} */}
-          {isLoading && <Loader />}
-          {!isLoading && !error && <MovieList movies={movies} />}
-          {error && <ErrorMessage message={error} />}
+          <MovieList movies={movies} />
         </Box>
         <Box>
           <WatchedSummary watched={watched} />
@@ -107,20 +72,6 @@ export default function App() {
     </>
   );
 }
-
-function Loader() {
-  return <p className="loader">Loading...</p>;
-}
-
-function ErrorMessage({ message }) {
-  return (
-    <p className="error">
-      <span>📛</span>
-      {message}
-    </p>
-  );
-}
-
 function NavBar({ children }) {
   return (
     <nav className="nav-bar">
@@ -153,7 +104,7 @@ function Search() {
 function NumResults({ movies }) {
   return (
     <p className="num-results">
-      {/* Found <strong>{movies.length}</strong> results */}
+      Found <strong>{movies.length}</strong> results
     </p>
   );
 }
