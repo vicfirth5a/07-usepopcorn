@@ -52,9 +52,12 @@ const average = (arr) =>
 
 const KEY = "5d892faf";
 // const query = "interstellar";
-const query = "huhkhkljh";
+
+
+
 
 export default function App() {
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,6 +67,8 @@ export default function App() {
     async function fetchMovies() {
       try {
         setIsLoading(true);
+        setError('')
+       
         const res = await fetch(
           `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
         );
@@ -82,13 +87,21 @@ export default function App() {
         setIsLoading(false);
       }
     }
+    
+ 
+    if(query.length<3){
+      setMovies([])
+      setError('')
+      return
+    }
+
     fetchMovies();
-  }, []);
+  }, [query]);
 
   return (
     <>
       <NavBar>
-        <Search />
+        <Search query={query} setQuery={setQuery}/>
         <NumResults movies={movies} />
       </NavBar>
 
@@ -137,8 +150,8 @@ function Logo() {
     </div>
   );
 }
-function Search() {
-  const [query, setQuery] = useState("");
+function Search({query,setQuery}) {
+  
   return (
     <input
       className="search"
